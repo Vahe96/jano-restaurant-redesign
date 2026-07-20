@@ -7,6 +7,7 @@ import {
 import './styles.css'
 import { CartDrawer, CartFeedback, Footer, Header, useCartState } from './SiteChrome.jsx'
 import { selectFeaturedProducts, useShopData } from './useShopData.js'
+import { assetPath, sitePath } from './paths.js'
 
 document.documentElement.dataset.stylesReady = ''
 
@@ -15,7 +16,7 @@ function Story({ about }) {
   return <section className="section story-section" id="story">
     <div className="shell story-grid">
       <div className="story-media reveal">
-        <img src={about.image} srcSet={about.imageSmall ? `${about.imageSmall} 520w, ${about.image} 900w` : undefined} onError={event => { event.currentTarget.onerror = null; event.currentTarget.removeAttribute('srcset'); event.currentTarget.src = '/images/heritage-craft.webp' }} sizes="(max-width: 560px) 85vw, 540px" width="900" height="1125" alt="Jano ռեստորանի պատմությունը" loading="lazy" />
+        <img src={assetPath(about.image)} srcSet={about.imageSmall ? `${assetPath(about.imageSmall)} 520w, ${assetPath(about.image)} 900w` : undefined} onError={event => { event.currentTarget.onerror = null; event.currentTarget.removeAttribute('srcset'); event.currentTarget.src = assetPath('/images/heritage-craft.webp') }} sizes="(max-width: 560px) 85vw, 540px" width="900" height="1125" alt="Jano ռեստորանի պատմությունը" loading="lazy" />
         <div className="year-seal"><span>Հիմնադրվել է</span><strong>1946</strong><span>Երևան</span></div>
       </div>
       <div className="story-copy reveal">
@@ -26,7 +27,7 @@ function Story({ about }) {
           <div><ChefHat /><span><strong>Ձեռքի աշխատանք</strong><small>Ամեն օր՝ մեր խոհանոցում</small></span></div>
           <div><Sparkles /><span><strong>Ընտանեկան բաղադրատոմսեր</strong><small>Պահպանված 1946-ից</small></span></div>
         </div>
-        <a className="text-link" href="/menu/">Բացահայտել մեր խոհանոցը <ArrowRight size={17} /></a>
+        <a className="text-link" href={sitePath('menu/')}>Բացահայտել մեր խոհանոցը <ArrowRight size={17} /></a>
       </div>
     </div>
   </section>
@@ -50,12 +51,12 @@ function MenuSection({ addToCart, categories, products, totalProducts }) {
         <label className="menu-search"><Search size={18} /><span className="sr-only">Որոնել մենյուում</span><input value={query} onChange={e => setQuery(e.target.value)} placeholder="Որոնել ուտեստը" /></label>
       </div>
       <figure className="menu-visual reveal">
-        <img src="/images/signature-spread.webp" srcSet="/images/signature-spread-mobile.webp 700w, /images/signature-spread-tablet.webp 900w, /images/signature-spread.webp 1400w" sizes="(max-width: 820px) 100vw, 1240px" width="1400" height="800" alt="Ճանոյի հայկական և մերձավորարևելյան ուտեստների սեղանը" loading="lazy" />
+        <img src={assetPath('/images/signature-spread.webp')} srcSet={`${assetPath('/images/signature-spread-mobile.webp')} 700w, ${assetPath('/images/signature-spread-tablet.webp')} 900w, ${assetPath('/images/signature-spread.webp')} 1400w`} sizes="(max-width: 820px) 100vw, 1240px" width="1400" height="800" alt="Ճանոյի հայկական և մերձավորարևելյան ուտեստների սեղանը" loading="lazy" />
         <figcaption><small>Սեղանը կիսելու համար է</small><strong>7 համ · 1 պատմություն</strong></figcaption>
       </figure>
       <div className="dish-grid" aria-live="polite">
         {visible.map(dish => <article className="dish-card reveal" key={dish.id}>
-          <div className="dish-image-wrap"><img src={dish.localImage || dish.image} srcSet={dish.smallImage ? `${dish.smallImage} 480w, ${dish.localImage || dish.image} 720w` : undefined} onError={event => { event.currentTarget.onerror = null; event.currentTarget.removeAttribute('srcset'); event.currentTarget.src = '/images/dish-special.webp' }} sizes="(max-width: 560px) calc(100vw - 30px), (max-width: 1080px) 50vw, 33vw" alt="" loading="lazy" width="720" height="540" />{dish.badge && <span className="dish-badge">{dish.badge}</span>}</div>
+          <div className="dish-image-wrap"><img src={assetPath(dish.localImage || dish.image)} srcSet={dish.smallImage ? `${assetPath(dish.smallImage)} 480w, ${assetPath(dish.localImage || dish.image)} 720w` : undefined} onError={event => { event.currentTarget.onerror = null; event.currentTarget.removeAttribute('srcset'); event.currentTarget.src = assetPath('/images/dish-special.webp') }} sizes="(max-width: 560px) calc(100vw - 30px), (max-width: 1080px) 50vw, 33vw" alt="" loading="lazy" width="720" height="540" />{dish.badge && <span className="dish-badge">{dish.badge}</span>}</div>
           <div className="dish-body">
             <div className="dish-title"><h3>{dish.name}</h3><strong>{dish.price.toLocaleString('hy-AM')} ֏</strong></div>
             <p>{dish.description}</p>
@@ -63,14 +64,14 @@ function MenuSection({ addToCart, categories, products, totalProducts }) {
           </div>
         </article>)}
       </div>
-      <div className="menu-footer reveal"><p>Ճաշացանկում հասանելի է <strong>{totalProducts} ուտեստ</strong></p><a className="button button-dark" href="/menu/">Տեսնել ամբողջ մենյուն <ArrowRight size={17} /></a></div>
+      <div className="menu-footer reveal"><p>Ճաշացանկում հասանելի է <strong>{totalProducts} ուտեստ</strong></p><a className="button button-dark" href={sitePath('menu/')}>Տեսնել ամբողջ մենյուն <ArrowRight size={17} /></a></div>
     </div>
   </section>
 }
 
 function Events() {
   return <section className="events-section" id="events">
-    <div className="events-image reveal"><img src="/images/banquet-jano.webp" srcSet="/images/banquet-jano-mobile.webp 600w, /images/banquet-jano.webp 900w" sizes="(max-width: 820px) 100vw, 53vw" width="900" height="1125" alt="Տոնական սեղան Jano ռեստորանի սրահում" loading="lazy" /></div>
+    <div className="events-image reveal"><img src={assetPath('/images/banquet-jano.webp')} srcSet={`${assetPath('/images/banquet-jano-mobile.webp')} 600w, ${assetPath('/images/banquet-jano.webp')} 900w`} sizes="(max-width: 820px) 100vw, 53vw" width="900" height="1125" alt="Տոնական սեղան Jano ռեստորանի սրահում" loading="lazy" /></div>
     <div className="events-copy reveal">
       <p className="eyebrow">Ձեր կարևոր օրերի համար</p>
       <h2>Տոնեք այնպես, ինչպես <em>կհիշեք</em></h2>
@@ -81,7 +82,7 @@ function Events() {
         <li><Check /> Արտագնա քեյթրինգ</li>
         <li><Check /> Մինչև 120 հյուր</li>
       </ul>
-      <a className="button button-gold" href="/#reserve">Քննարկել միջոցառումը <ArrowRight size={17} /></a>
+      <a className="button button-gold" href={sitePath('#reserve')}>Քննարկել միջոցառումը <ArrowRight size={17} /></a>
     </div>
   </section>
 }

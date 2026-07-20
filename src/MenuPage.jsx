@@ -3,19 +3,20 @@ import {
   ArrowRight, ChevronDown, Clock3, Flame, PackageOpen, Search,
   ShoppingBag, Sparkles, UtensilsCrossed, X
 } from 'lucide-react'
+import { assetPath } from './paths.js'
 
 const formatPrice = price => `${Number(price).toLocaleString('hy-AM')} ֏`
 
 function MenuProductCard({ product, addToCart }) {
-  const productImage = product.localImage || product.image || '/images/dish-special.webp'
-  const imageSet = product.smallImage ? `${product.smallImage} 240w, ${productImage} 480w` : undefined
+  const productImage = assetPath(product.localImage || product.image || '/images/dish-special.webp')
+  const imageSet = product.smallImage ? `${assetPath(product.smallImage)} 240w, ${productImage} 480w` : undefined
   return <article className="catalog-card">
     <div className="catalog-card-media">
       <img
         src={productImage}
         srcSet={imageSet}
         sizes="(max-width: 560px) 128px, (max-width: 1080px) 180px, 180px"
-        onError={event => { event.currentTarget.onerror = null; event.currentTarget.removeAttribute('srcset'); event.currentTarget.src = '/images/dish-special.webp' }}
+        onError={event => { event.currentTarget.onerror = null; event.currentTarget.removeAttribute('srcset'); event.currentTarget.src = assetPath('/images/dish-special.webp') }}
         width="480"
         height="360"
         alt=""
@@ -42,8 +43,8 @@ function MenuProductCard({ product, addToCart }) {
 }
 
 function CollectionCard({ collection, addToCart }) {
-  const collectionImage = collection.localImage || collection.image || '/images/signature-spread.webp'
-  const imageSet = collection.smallImage ? `${collection.smallImage} 760w, ${collectionImage} 900w` : undefined
+  const collectionImage = assetPath(collection.localImage || collection.image || '/images/signature-spread.webp')
+  const imageSet = collection.smallImage ? `${assetPath(collection.smallImage)} 760w, ${collectionImage} 900w` : undefined
   const collectionProduct = {
     id: `box-${collection.id}`,
     name: collection.name,
@@ -55,7 +56,7 @@ function CollectionCard({ collection, addToCart }) {
     productIds: collection.products?.map(product => product.id) || [],
   }
   return <article className="collection-card">
-    <img src={collectionImage} srcSet={imageSet} sizes="(max-width: 820px) 100vw, 50vw" onError={event => { event.currentTarget.onerror = null; event.currentTarget.removeAttribute('srcset'); event.currentTarget.src = '/images/signature-spread.webp' }} alt="" width="900" height="620" loading="lazy" decoding="async" />
+    <img src={collectionImage} srcSet={imageSet} sizes="(max-width: 820px) 100vw, 50vw" onError={event => { event.currentTarget.onerror = null; event.currentTarget.removeAttribute('srcset'); event.currentTarget.src = assetPath('/images/signature-spread.webp') }} alt="" width="900" height="620" loading="lazy" decoding="async" />
     <div className="collection-shade" />
     <div className="collection-copy">
       <div><small>{collection.kicker || 'Պատրաստի հավաքածու'}</small>{collection.serves && <span>{collection.serves}</span>}</div>
@@ -74,7 +75,7 @@ function CollectionCard({ collection, addToCart }) {
 
 export function MenuHero() {
   return <section className="menu-page-hero" aria-labelledby="menu-page-title">
-    <img src="/images/signature-spread.avif" srcSet="/images/signature-spread-mobile.avif 780w, /images/signature-spread.avif 1400w" sizes="100vw" width="1400" height="800" alt="" fetchPriority="high" />
+    <img src={assetPath('/images/signature-spread.avif')} srcSet={`${assetPath('/images/signature-spread-mobile.avif')} 780w, ${assetPath('/images/signature-spread.avif')} 1400w`} sizes="100vw" width="1400" height="800" alt="" fetchPriority="high" />
     <div className="menu-page-hero-shade" />
     <div className="shell menu-page-hero-copy">
       <p className="eyebrow light"><span /> Ճանոյի ամբողջական ճաշացանկը</p>

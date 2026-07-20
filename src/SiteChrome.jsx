@@ -4,13 +4,14 @@ import {
   MapPin, Menu, Minus, Phone, Plus, ShoppingBag, X
 } from 'lucide-react'
 import { fallbackShopInfo } from './useShopData.js'
+import { sitePath } from './paths.js'
 
 const navItems = [
-  ['Պատմություն', '/#story'], ['Մենյու', '/menu/'], ['Միջոցառումներ', '/#events'], ['Կապ', '/#contact']
+  ['Պատմություն', sitePath('#story')], ['Մենյու', sitePath('menu/')], ['Միջոցառումներ', sitePath('#events')], ['Կապ', sitePath('#contact')]
 ]
 
 export function Logo() {
-  return <a className="logo" href="/">
+  return <a className="logo" href={sitePath()}>
     <span className="logo-mark" aria-hidden="true"><span>J</span></span>
     <span className="logo-copy"><strong>JANO</strong><small>RESTAURANT · 1946</small></span>
   </a>
@@ -45,7 +46,7 @@ export function Header({ cartCount, onCart, shopInfo = fallbackShopInfo }) {
       <nav aria-label="Բջջային նավիգացիա">
         {navItems.map(([label, href]) => <a key={href} href={href} onClick={() => setOpen(false)}>{label}<ArrowRight size={17} /></a>)}
       </nav>
-      <a className="button button-gold" href="/#reserve" onClick={() => setOpen(false)}>Ամրագրել սեղան</a>
+      <a className="button button-gold" href={sitePath('#reserve')} onClick={() => setOpen(false)}>Ամրագրել սեղան</a>
     </div>}
     {open && <button className="panel-scrim" onClick={() => setOpen(false)} aria-label="Փակել մենյուն" />}
   </header>
@@ -78,7 +79,7 @@ export function CartDrawer({ items, setItems, open, onClose, shopInfo = fallback
     <aside ref={drawerRef} className={`cart-drawer ${open ? 'is-open' : ''}`} aria-hidden={!open} inert={!open} role="dialog" aria-modal="true" aria-label="Զամբյուղ">
       <div className="drawer-head"><div><small>Ձեր պատվերը</small><h2>Զամբյուղ</h2></div><button className="icon-button" onClick={onClose} aria-label="Փակել զամբյուղը"><X /></button></div>
       <div className="drawer-items">
-        {!items.length && <div className="empty-cart"><ShoppingBag /><h3>Զամբյուղը դատարկ է</h3><p>Ընտրեք որևէ ուտեստ մեր մենյուից։</p><a className="text-link" href="/menu/" onClick={onClose}>Դիտել մենյուն <ArrowRight size={17} /></a></div>}
+        {!items.length && <div className="empty-cart"><ShoppingBag /><h3>Զամբյուղը դատարկ է</h3><p>Ընտրեք որևէ ուտեստ մեր մենյուից։</p><a className="text-link" href={sitePath('menu/')} onClick={onClose}>Դիտել մենյուն <ArrowRight size={17} /></a></div>}
         {items.map(item => <div className="cart-item" key={item.id}><img src={item.image} alt="" /><div><strong>{item.name}</strong><span>{item.price.toLocaleString('hy-AM')} ֏</span><div className="quantity"><button onClick={() => update(item.id, -1)} aria-label={`Պակասեցնել ${item.name}-ի քանակը`}><Minus /></button><span>{item.quantity}</span><button onClick={() => update(item.id, 1)} aria-label={`Ավելացնել ${item.name}-ի քանակը`}><Plus /></button></div></div></div>)}
       </div>
       {!!items.length && <div className="drawer-total"><div><span>Ընդամենը</span><strong>{total.toLocaleString('hy-AM')} ֏</strong></div><a className="button button-gold" href={`tel:${shopInfo.phoneHref}`}>Պատվիրել հեռախոսով <Phone size={17} /></a><small>Առաքման մանրամասները կհաստատվեն զանգով։</small></div>}
@@ -103,9 +104,9 @@ export function Footer({ shopInfo = fallbackShopInfo }) {
   return <footer id="contact">
     <div className="shell footer-top">
       <div className="footer-brand"><Logo /><p>Ընտանեկան բաղադրատոմսեր և ջերմ հյուրընկալություն՝ Երևանի սրտում, 1946 թվականից։</p><div className="socials"><a href="https://www.facebook.com" aria-label="Facebook"><Facebook /></a><a href="https://www.instagram.com" aria-label="Instagram"><Instagram /></a></div></div>
-      <div><h3>Բացահայտել</h3>{navItems.map(([label, href]) => <a key={href} href={href}>{label}</a>)}<a href="/#reserve">Ամրագրում</a></div>
+      <div><h3>Բացահայտել</h3>{navItems.map(([label, href]) => <a key={href} href={href}>{label}</a>)}<a href={sitePath('#reserve')}>Ամրագրում</a></div>
       <div><h3>Կապ</h3><a href={`https://maps.google.com/?q=${mapQuery}`} target="_blank" rel="noreferrer"><MapPin /> {shopInfo.address}</a><a href={`tel:${shopInfo.phoneHref}`}><Phone /> {shopInfo.phoneDisplay}</a><a href={`mailto:${shopInfo.email}`}>{shopInfo.email}</a><span><Clock3 /> Ամեն օր՝ 10:00–00:00</span></div>
-      <div className="footer-cta"><p>Պատրա՞ստ եք համտեսել</p><h3>Հանդիպենք Ճանոյում</h3><a className="button button-gold" href="/#reserve">Ամրագրել սեղան <CalendarDays size={17} /></a></div>
+      <div className="footer-cta"><p>Պատրա՞ստ եք համտեսել</p><h3>Հանդիպենք Ճանոյում</h3><a className="button button-gold" href={sitePath('#reserve')}>Ամրագրել սեղան <CalendarDays size={17} /></a></div>
     </div>
     <div className="shell footer-bottom"><span>© 2026 Jano Restaurant</span><span>Ավանդույթը նոր համով · Երևան</span></div>
   </footer>
