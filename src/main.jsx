@@ -14,10 +14,12 @@ document.documentElement.dataset.stylesReady = ''
 
 function Story({ about }) {
   const paragraphs = String(about.description || '').split(/\r?\n+/).filter(Boolean).slice(0, 2)
+  const storyImage = assetPath('/images/heritage-craft.webp')
+  const storyImageSmall = assetPath('/images/heritage-craft-mobile.webp')
   return <section className="section story-section" id="story">
     <div className="shell story-grid">
       <div className="story-media reveal">
-        <img src={assetPath(about.image)} srcSet={about.imageSmall ? `${assetPath(about.imageSmall)} 520w, ${assetPath(about.image)} 900w` : undefined} onError={event => { event.currentTarget.onerror = null; event.currentTarget.removeAttribute('srcset'); event.currentTarget.src = assetPath('/images/heritage-craft.webp') }} sizes="(max-width: 560px) 85vw, 540px" width="900" height="1125" alt="Jano ռեստորանի պատմությունը" loading="lazy" />
+        <img src={storyImage} srcSet={`${storyImageSmall} 520w, ${storyImage} 900w`} onError={event => { event.currentTarget.onerror = null; event.currentTarget.removeAttribute('srcset'); event.currentTarget.src = storyImage }} sizes="(max-width: 560px) 85vw, 540px" width="900" height="1125" alt="Jano-ի խոհարարն ավանդական իշլի քյուֆթա պատրաստելիս" loading="lazy" />
         <div className="year-seal"><span>Հիմնադրվել է</span><strong>1946</strong><span>Երևան</span></div>
       </div>
       <div className="story-copy reveal">
