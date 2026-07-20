@@ -126,7 +126,7 @@ export function MenuContent({ addToCart, categories, products, collections, stat
           </button>
           <div className={`catalog-tabs ${mobileFilters ? 'is-open' : ''}`} aria-label="Մենյուի կատեգորիաներ">
             {categories.map(category => <button key={category.id} aria-pressed={!query && activeCategory === category.id} onClick={() => chooseCategory(category.id)}>
-              <span>{category.name}</span><small>{category.count || 10}</small>
+              <span>{category.name}</span><small>{category.count ?? 0}</small>
             </button>)}
           </div>
         </div>
@@ -136,7 +136,7 @@ export function MenuContent({ addToCart, categories, products, collections, stat
         <aside className="catalog-sidebar" aria-label="Կատեգորիաներ">
           <div className="sidebar-title"><UtensilsCrossed size={18} /><span>Կատեգորիաներ</span></div>
           {categories.map(category => <button key={category.id} aria-current={!query && activeCategory === category.id ? 'true' : undefined} onClick={() => chooseCategory(category.id)}>
-            <span>{category.name}</span><small>{category.count || 10}</small>
+            <span>{category.name}</span><small>{category.count ?? 0}</small>
           </button>)}
           <div className="sidebar-note"><Sparkles /><p><strong>Չե՞ք կողմնորոշվում</strong><span>Զանգահարեք, և կօգնենք կազմել ձեր սեղանը։</span></p></div>
         </aside>
