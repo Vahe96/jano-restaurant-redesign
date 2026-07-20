@@ -42,6 +42,7 @@ const fallbackCollections = menuCollections.map(collection => ({
   ...collection,
   localImage: `/images/menu/box-${collection.id}.webp`,
   smallImage: `/images/menu/box-${collection.id}-sm.webp`,
+  products: (collection.productIds || []).map(productId => fallbackProducts.find(product => product.id === productId)).filter(Boolean),
   source: 'fallback',
 }))
 
@@ -119,17 +120,38 @@ function normalizeCatalog(tree = []) {
 }
 
 function normalizeCollections(collections = []) {
-  return (Array.isArray(collections) ? collections : []).map(collection => ({
-    id: String(collection.id),
-    name: collection.name,
-    kicker: 'Պատրաստի հավաքածու',
-    description: `${collection.products?.length || 0} ընտրված ուտեստ՝ մեկ հավաքածուում։`,
-    items: (collection.products || []).map(product => product.name),
-    products: collection.products || [],
-    price: Number(collection.price) || 0,
-    image: collection.media_url?.[0] || collection.products?.[0]?.media_urls?.[0] || '/images/signature-spread.webp',
-    source: 'api',
-  }))
+  return (Array.isArray(collections) ? collections : []).map(collection => {
+    const products = (collection.products || []).map(product => {
+      const regularPrice = Number(product.price) || 0
+      const salePrice = Number(product.new_price)
+      const hasSale = Number.isFinite(salePrice) && salePrice > 0 && salePrice < regularPrice
+      return {
+        id: product.id,
+        name: product.name || 'Ուտեստ',
+        description: product.description || 'Ներառված է բոքսի կազմում։',
+        price: hasSale ? salePrice : regularPrice,
+        oldPrice: hasSale ? regularPrice : null,
+        image: product.media_urls?.[0] || '/images/dish-special.webp',
+        quantity: Number(product.quantity || product.pivot?.quantity) || 1,
+        category: 'Բոքսի պարունակություն',
+        available: product.status !== 'out_of_stock',
+      }
+    })
+    const price = Number(collection.price) || 0
+    const separateTotal = products.reduce((sum, product) => sum + product.price * product.quantity, 0)
+    return {
+      id: String(collection.id),
+      name: collection.name,
+      kicker: 'Պատրաստի բոքս',
+      description: collection.description || `${products.length} ընտրված ուտեստ՝ մեկ պատրաստի բոքսում։`,
+      items: products.map(product => product.quantity > 1 ? `${product.name} · ${product.quantity} հատ` : product.name),
+      products,
+      price,
+      oldPrice: separateTotal > price ? separateTotal : null,
+      image: collection.media_url?.[0] || collection.products?.[0]?.media_urls?.[0] || '/images/signature-spread.webp',
+      source: 'api',
+    }
+  })
 }
 
 function normalizeBootstrap(result) {

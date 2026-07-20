@@ -18,6 +18,7 @@ export default defineConfig({
       input: {
         home: resolve(import.meta.dirname, 'index.html'),
         menu: resolve(import.meta.dirname, 'menu/index.html'),
+        box: resolve(import.meta.dirname, 'box/index.html'),
       },
     },
   },

@@ -2,12 +2,13 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { render } from 'preact'
 import { createPortal } from 'react-dom'
 import {
-  ArrowRight, Check, ChefHat, Clock3, Phone, Plus, Search, Sparkles
+  ArrowRight, Check, ChefHat, Clock3, PackageOpen, Phone, Plus, Sparkles
 } from 'lucide-react'
 import './styles.css'
 import { CartDrawer, CartFeedback, Footer, Header, useCartState } from './SiteChrome.jsx'
 import { selectFeaturedProducts, useShopData } from './useShopData.js'
 import { assetPath, sitePath } from './paths.js'
+import CollectionCard from './CollectionCard.jsx'
 
 document.documentElement.dataset.stylesReady = ''
 
@@ -34,9 +35,6 @@ function Story({ about }) {
 }
 
 function MenuSection({ addToCart, categories, products, totalProducts }) {
-  const [active, setActive] = useState('all')
-  const [query, setQuery] = useState('')
-  const visible = useMemo(() => products.filter(dish => (!query && (active === 'all' || dish.categoryId === active)) || (query && `${dish.name} ${dish.description}`.toLocaleLowerCase('hy-AM').includes(query.toLocaleLowerCase('hy-AM')))), [active, products, query])
   const tabs = [{ id: 'all', name: 'Բոլորը' }, ...categories]
   return <section className="section menu-section" id="menu">
     <div className="shell">
@@ -46,16 +44,16 @@ function MenuSection({ addToCart, categories, products, totalProducts }) {
       </div>
       <div className="menu-toolbar reveal">
         <div className="category-tabs" aria-label="Ուտեստների կատեգորիաներ">
-          {tabs.map(category => <button key={category.id} aria-pressed={active === category.id && !query} onClick={() => { setActive(category.id); setQuery('') }}>{category.name}</button>)}
+          {tabs.map(category => <a key={category.id} href={category.id === 'all' ? sitePath('menu/#catalog-start') : sitePath(`menu/?category=${encodeURIComponent(category.id)}&categoryName=${encodeURIComponent(category.name)}#catalog-start`)}>{category.name}<ArrowRight size={13} /></a>)}
         </div>
-        <label className="menu-search"><Search size={18} /><span className="sr-only">Որոնել մենյուում</span><input value={query} onChange={e => setQuery(e.target.value)} placeholder="Որոնել ուտեստը" /></label>
+        <a className="menu-all-link" href={sitePath('menu/#catalog-start')}>Ամբողջ մենյուն <ArrowRight size={15} /></a>
       </div>
       <figure className="menu-visual reveal">
         <img src={assetPath('/images/signature-spread.webp')} srcSet={`${assetPath('/images/signature-spread-mobile.webp')} 700w, ${assetPath('/images/signature-spread-tablet.webp')} 900w, ${assetPath('/images/signature-spread.webp')} 1400w`} sizes="(max-width: 820px) 100vw, 1240px" width="1400" height="800" alt="Ճանոյի հայկական և մերձավորարևելյան ուտեստների սեղանը" loading="lazy" />
         <figcaption><small>Սեղանը կիսելու համար է</small><strong>7 համ · 1 պատմություն</strong></figcaption>
       </figure>
       <div className="dish-grid" aria-live="polite">
-        {visible.map(dish => <article className="dish-card reveal" key={dish.id}>
+        {products.map(dish => <article className="dish-card reveal" key={dish.id}>
           <div className="dish-image-wrap"><img src={assetPath(dish.localImage || dish.image)} srcSet={dish.smallImage ? `${assetPath(dish.smallImage)} 480w, ${assetPath(dish.localImage || dish.image)} 720w` : undefined} onError={event => { event.currentTarget.onerror = null; event.currentTarget.removeAttribute('srcset'); event.currentTarget.src = assetPath('/images/dish-special.webp') }} sizes="(max-width: 560px) calc(100vw - 30px), (max-width: 1080px) 50vw, 33vw" alt="" loading="lazy" width="720" height="540" />{dish.badge && <span className="dish-badge">{dish.badge}</span>}</div>
           <div className="dish-body">
             <div className="dish-title"><h3>{dish.name}</h3><strong>{dish.price.toLocaleString('hy-AM')} ֏</strong></div>
@@ -65,6 +63,22 @@ function MenuSection({ addToCart, categories, products, totalProducts }) {
         </article>)}
       </div>
       <div className="menu-footer reveal"><p>Ճաշացանկում հասանելի է <strong>{totalProducts} ուտեստ</strong></p><a className="button button-dark" href={sitePath('menu/')}>Տեսնել ամբողջ մենյուն <ArrowRight size={17} /></a></div>
+    </div>
+  </section>
+}
+
+function HomeCollections({ collections }) {
+  if (!collections.length) return null
+  return <section className="section home-collections" aria-labelledby="home-collections-title">
+    <div className="shell">
+      <div className="section-heading reveal">
+        <div><p className="eyebrow">Պատրաստի լուծումներ</p><h2 id="home-collections-title">Jano <em>բոքսեր</em></h2></div>
+        <p>Մտածված համադրություններ՝ ընտանեկան սեղանի, ընկերական երեկոյի կամ թիմային լանչի համար։ Մեկ ընտրություն, ամբողջական սեղան։</p>
+      </div>
+      <div className="collection-grid home-collection-grid reveal">
+        {collections.slice(0, 3).map(collection => <CollectionCard key={collection.id} collection={collection} compact />)}
+      </div>
+      <div className="home-collections-footer reveal"><span><PackageOpen /> Յուրաքանչյուր բոքսի ներսում կտեսնեք ամբողջ պարունակությունն ու առանձին գները։</span><a className="button button-dark" href={sitePath('menu/#collections-title')}>Դիտել բոլոր բոքսերը <ArrowRight size={17} /></a></div>
     </div>
   </section>
 }
@@ -128,7 +142,7 @@ const stateRoot = document.getElementById('home-state-root')
 
 function HomeState() {
   const { cart, setCart, cartOpen, lastAdded, count, total, addToCart, openCart, closeCart } = useCartState()
-  const { shopInfo, about, categories, products, featuredProductIds } = useShopData()
+  const { shopInfo, about, categories, products, collections, featuredProductIds } = useShopData()
   const featuredProducts = useMemo(() => selectFeaturedProducts(products, featuredProductIds), [featuredProductIds, products])
   const featuredCategories = useMemo(() => categories.filter(category => featuredProducts.some(product => product.categoryId === category.id)), [categories, featuredProducts])
   useEffect(() => {
@@ -144,6 +158,7 @@ function HomeState() {
     {createPortal(<>
       <Story about={about} />
       <MenuSection addToCart={addToCart} categories={featuredCategories} products={featuredProducts} totalProducts={products.length} />
+      <HomeCollections collections={collections} />
       <Events />
       <Reservation shopInfo={shopInfo} />
     </>, contentRoot)}

@@ -4,6 +4,7 @@ import {
   ShoppingBag, Sparkles, UtensilsCrossed, X
 } from 'lucide-react'
 import { assetPath } from './paths.js'
+import CollectionCard from './CollectionCard.jsx'
 
 const formatPrice = price => `${Number(price).toLocaleString('hy-AM')} ֏`
 
@@ -42,37 +43,6 @@ function MenuProductCard({ product, addToCart }) {
   </article>
 }
 
-function CollectionCard({ collection, addToCart }) {
-  const collectionImage = assetPath(collection.localImage || collection.image || '/images/signature-spread.webp')
-  const imageSet = collection.smallImage ? `${assetPath(collection.smallImage)} 760w, ${collectionImage} 900w` : undefined
-  const collectionProduct = {
-    id: `box-${collection.id}`,
-    name: collection.name,
-    description: collection.description,
-    price: collection.price,
-    image: collectionImage,
-    category: 'Հավաքածուներ',
-    collectionId: collection.source === 'api' ? collection.id : undefined,
-    productIds: collection.products?.map(product => product.id) || [],
-  }
-  return <article className="collection-card">
-    <img src={collectionImage} srcSet={imageSet} sizes="(max-width: 820px) 100vw, 50vw" onError={event => { event.currentTarget.onerror = null; event.currentTarget.removeAttribute('srcset'); event.currentTarget.src = assetPath('/images/signature-spread.webp') }} alt="" width="900" height="620" loading="lazy" decoding="async" />
-    <div className="collection-shade" />
-    <div className="collection-copy">
-      <div><small>{collection.kicker || 'Պատրաստի հավաքածու'}</small>{collection.serves && <span>{collection.serves}</span>}</div>
-      <h3>{collection.name}</h3>
-      <p>{collection.description}</p>
-      <ul aria-label="Հավաքածուի պարունակությունը">
-        {(collection.items || []).slice(0, 3).map(item => <li key={item}>{item}</li>)}
-      </ul>
-      <div className="collection-action">
-        <p>{collection.oldPrice && <del>{formatPrice(collection.oldPrice)}</del>}<strong>{formatPrice(collection.price)}</strong></p>
-        <button onClick={() => addToCart(collectionProduct)}>Ընտրել <ArrowRight size={16} /></button>
-      </div>
-    </div>
-  </article>
-}
-
 export function MenuHero() {
   return <section className="menu-page-hero" aria-labelledby="menu-page-title">
     <img src={assetPath('/images/signature-spread.avif')} srcSet={`${assetPath('/images/signature-spread-mobile.avif')} 780w, ${assetPath('/images/signature-spread.avif')} 1400w`} sizes="100vw" width="1400" height="800" alt="" fetchPriority="high" />
@@ -90,7 +60,9 @@ export function MenuHero() {
 }
 
 export function MenuContent({ addToCart, categories, products, collections, status, shopInfo }) {
-  const [activeCategory, setActiveCategory] = useState(categories[0]?.id || '')
+  const requestedCategory = useMemo(() => new URLSearchParams(window.location.search).get('category'), [])
+  const requestedCategoryName = useMemo(() => new URLSearchParams(window.location.search).get('categoryName'), [])
+  const [activeCategory, setActiveCategory] = useState(requestedCategory || categories[0]?.id || '')
   const [query, setQuery] = useState('')
   const [limit, setLimit] = useState(10)
   const [mobileFilters, setMobileFilters] = useState(false)
@@ -112,10 +84,15 @@ export function MenuContent({ addToCart, categories, products, collections, stat
     if (description) description.content = 'Jano Restaurant-ի ամբողջական մենյուն՝ հատուկ առաջարկներ, լանչեր, հավաքածուներ, խորոված, նախուտեստներ և ավելին։'
   }, [])
   useEffect(() => {
-    if (!categories.some(category => category.id === activeCategory)) setActiveCategory(categories[0]?.id || '')
+    const requestedMatch = categories.find(category => String(category.id) === String(requestedCategory) || (requestedCategoryName && category.name === requestedCategoryName))
+    if (requestedMatch) {
+      setActiveCategory(requestedMatch.id)
+    } else if (!categories.some(category => String(category.id) === String(activeCategory))) {
+      setActiveCategory(categories[0]?.id || '')
+    }
     const heroDescription = document.querySelector('.menu-page-hero-copy > p:not(.eyebrow)')
     if (heroDescription) heroDescription.textContent = `${products.length} ուտեստ, ${categories.length} կատեգորիա և մեկ պարզ սկզբունք՝ ամեն ինչ պատրաստել թարմ ու մատուցել ջերմությամբ։`
-  }, [activeCategory, categories, products.length])
+  }, [activeCategory, categories, products.length, requestedCategory, requestedCategoryName])
 
   const chooseCategory = categoryId => {
     setActiveCategory(categoryId)
@@ -132,7 +109,7 @@ export function MenuContent({ addToCart, categories, products, collections, stat
           <p>Պատրաստի համադրություններ ընտանիքի, ընկերների կամ գրասենյակային ընդմիջման համար։</p>
         </div>
         <div className="collection-grid">
-          {collections.map(collection => <CollectionCard key={collection.id} collection={collection} addToCart={addToCart} />)}
+          {collections.map(collection => <CollectionCard key={collection.id} collection={collection} />)}
         </div>
       </div>
     </section>
