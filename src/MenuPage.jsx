@@ -4,7 +4,7 @@ import {
   ShoppingBag, Sparkles, UtensilsCrossed, X
 } from 'lucide-react'
 import { assetPath } from './paths.js'
-import CollectionCard from './CollectionCard.jsx'
+import CollectionSlider from './CollectionSlider.jsx'
 
 const formatPrice = price => `${Number(price).toLocaleString('hy-AM')} ֏`
 
@@ -108,9 +108,7 @@ export function MenuContent({ addToCart, categories, products, collections, stat
           <div><p className="eyebrow">Կիսելու համար</p><h2 id="collections-title">Ճանոյի <em>հավաքածուները</em></h2></div>
           <p>Պատրաստի համադրություններ ընտանիքի, ընկերների կամ գրասենյակային ընդմիջման համար։</p>
         </div>
-        <div className="collection-grid">
-          {collections.map(collection => <CollectionCard key={collection.id} collection={collection} />)}
-        </div>
+        <CollectionSlider collections={collections} label="Մենյուի Jano box-երը" />
       </div>
     </section>
 

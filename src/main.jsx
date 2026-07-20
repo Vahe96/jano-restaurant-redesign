@@ -8,7 +8,7 @@ import './styles.css'
 import { CartDrawer, CartFeedback, Footer, Header, useCartState } from './SiteChrome.jsx'
 import { selectFeaturedProducts, useShopData } from './useShopData.js'
 import { assetPath, sitePath } from './paths.js'
-import CollectionCard from './CollectionCard.jsx'
+import CollectionSlider from './CollectionSlider.jsx'
 
 document.documentElement.dataset.stylesReady = ''
 
@@ -77,9 +77,7 @@ function HomeCollections({ collections }) {
         <div><p className="eyebrow">Պատրաստի լուծումներ</p><h2 id="home-collections-title">Jano <em>բոքսեր</em></h2></div>
         <p>Մտածված համադրություններ՝ ընտանեկան սեղանի, ընկերական երեկոյի կամ թիմային լանչի համար։ Մեկ ընտրություն, ամբողջական սեղան։</p>
       </div>
-      <div className="collection-grid home-collection-grid reveal">
-        {collections.slice(0, 3).map(collection => <CollectionCard key={collection.id} collection={collection} compact />)}
-      </div>
+      <CollectionSlider collections={collections} compact label="Գլխավոր էջի Jano box-երը" />
       <div className="home-collections-footer reveal"><span><PackageOpen /> Յուրաքանչյուր բոքսի ներսում կտեսնեք ամբողջ պարունակությունն ու առանձին գները։</span><a className="button button-dark" href={sitePath('menu/#collections-title')}>Դիտել բոլոր բոքսերը <ArrowRight size={17} /></a></div>
     </div>
   </section>
