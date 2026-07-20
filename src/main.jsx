@@ -53,7 +53,7 @@ function MenuSection({ addToCart, categories, products, totalProducts }) {
         <figcaption><small>Սեղանը կիսելու համար է</small><strong>7 համ · 1 պատմություն</strong></figcaption>
       </figure>
       <div className="dish-grid" aria-live="polite">
-        {products.map(dish => <article className="dish-card reveal" key={dish.id}>
+        {products.map(dish => <article className="dish-card" key={dish.id}>
           <div className="dish-image-wrap"><img src={assetPath(dish.localImage || dish.image)} srcSet={dish.smallImage ? `${assetPath(dish.smallImage)} 480w, ${assetPath(dish.localImage || dish.image)} 720w` : undefined} onError={event => { event.currentTarget.onerror = null; event.currentTarget.removeAttribute('srcset'); event.currentTarget.src = assetPath('/images/dish-special.webp') }} sizes="(max-width: 560px) calc(100vw - 30px), (max-width: 1080px) 50vw, 33vw" alt="" loading="lazy" width="720" height="540" />{dish.badge && <span className="dish-badge">{dish.badge}</span>}</div>
           <div className="dish-body">
             <div className="dish-title"><h3>{dish.name}</h3><strong>{dish.price.toLocaleString('hy-AM')} ֏</strong></div>
