@@ -146,9 +146,31 @@ function HomeState() {
   const featuredProducts = useMemo(() => selectFeaturedProducts(products, featuredProductIds), [featuredProductIds, products])
   const featuredCategories = useMemo(() => categories.filter(category => featuredProducts.some(product => product.categoryId === category.id)), [categories, featuredProducts])
   useEffect(() => {
-    const observer = new IntersectionObserver(entries => entries.forEach(entry => entry.isIntersecting && entry.target.classList.add('is-visible')), { threshold: .12 })
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el))
-    return () => observer.disconnect()
+    if (!('IntersectionObserver' in window)) {
+      document.querySelectorAll('.reveal').forEach(element => element.classList.add('is-visible'))
+      return undefined
+    }
+
+    const observer = new IntersectionObserver(entries => entries.forEach(entry => {
+      if (!entry.isIntersecting) return
+      entry.target.classList.add('is-visible')
+      observer.unobserve(entry.target)
+    }), { threshold: .12 })
+
+    const observeReveals = root => {
+      if (!(root instanceof Element)) return
+      if (root.matches('.reveal:not(.is-visible)')) observer.observe(root)
+      root.querySelectorAll('.reveal:not(.is-visible)').forEach(element => observer.observe(element))
+    }
+
+    document.querySelectorAll('.reveal:not(.is-visible)').forEach(element => observer.observe(element))
+    const mutations = new MutationObserver(records => records.forEach(record => record.addedNodes.forEach(observeReveals)))
+    mutations.observe(document.body, { childList: true, subtree: true })
+
+    return () => {
+      mutations.disconnect()
+      observer.disconnect()
+    }
   }, [])
   return <>
     {createPortal(<>
