@@ -91,7 +91,7 @@ function normalizeProduct(product, category) {
     description: product.description || 'Մանրամասները ճշտեք մեր թիմից։',
     price: hasSale ? salePrice : regularPrice,
     oldPrice: hasSale ? regularPrice : null,
-    image: product.media_urls?.[0] || category.image || '/images/dish-special.webp',
+    image: product.media_urls?.[0] || '',
     badge: badgeLabels[product.badges?.[0]] || null,
     available: product.status !== 'out_of_stock',
     status: product.status,

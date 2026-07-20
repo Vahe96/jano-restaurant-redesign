@@ -9,15 +9,17 @@ import CollectionSlider from './CollectionSlider.jsx'
 const formatPrice = price => `${Number(price).toLocaleString('hy-AM')} ֏`
 
 function MenuProductCard({ product, addToCart }) {
-  const productImage = assetPath(product.localImage || product.image || '/images/dish-special.webp')
-  const imageSet = product.smallImage ? `${assetPath(product.smallImage)} 240w, ${productImage} 480w` : undefined
-  return <article className="catalog-card">
-    <div className="catalog-card-media">
+  const imageSource = product.localImage || product.image || ''
+  const [hasImage, setHasImage] = useState(Boolean(imageSource))
+  const productImage = hasImage ? assetPath(imageSource) : ''
+  const imageSet = hasImage && product.smallImage ? `${assetPath(product.smallImage)} 240w, ${productImage} 480w` : undefined
+  return <article className={`catalog-card${hasImage ? '' : ' catalog-card-no-media'}`}>
+    {hasImage && <div className="catalog-card-media">
       <img
         src={productImage}
         srcSet={imageSet}
         sizes="(max-width: 560px) 128px, (max-width: 1080px) 180px, 180px"
-        onError={event => { event.currentTarget.onerror = null; event.currentTarget.removeAttribute('srcset'); event.currentTarget.src = assetPath('/images/dish-special.webp') }}
+        onError={() => setHasImage(false)}
         width="480"
         height="360"
         alt=""
@@ -25,7 +27,7 @@ function MenuProductCard({ product, addToCart }) {
         decoding="async"
       />
       {product.badge && <span>{product.badge}</span>}
-    </div>
+    </div>}
     <div className="catalog-card-content">
       <div className="catalog-card-topline">
         <small>{product.category}</small>
@@ -35,7 +37,7 @@ function MenuProductCard({ product, addToCart }) {
       <p>{product.description}</p>
       <div className="catalog-card-bottom">
         <strong>{product.oldPrice && <del>{formatPrice(product.oldPrice)}</del>}{formatPrice(product.price)}</strong>
-        <button disabled={!product.available} onClick={() => addToCart({ ...product, image: productImage })} aria-label={`${product.name}՝ ավելացնել զամբյուղ`}>
+        <button disabled={!product.available} onClick={() => addToCart({ ...product, image: productImage || '' })} aria-label={`${product.name}՝ ավելացնել զամբյուղ`}>
           <ShoppingBag size={16} /> <span>{product.available ? 'Ավելացնել' : 'Սպառված է'}</span>
         </button>
       </div>
