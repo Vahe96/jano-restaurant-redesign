@@ -1,4 +1,4 @@
-import{c as F,T as $,n as N,h as I,u as e,X as D,S as H,e as U,i as S,a as L,b as _,R as J,f as O,g as j,$ as k,H as Q,F as T,j as V,k as X}from"./SiteChrome-BJGoKEzy.js";import{C as G,P as K}from"./CollectionSlider-Cq0N3cOO.js";import{U as M}from"./utensils-crossed-CwhvUL4A.js";/**
+import{c as F,T as $,n as N,h as I,u as e,X as D,S as H,e as U,i as S,a as L,b as _,R as J,f as O,g as j,$ as k,H as Q,F as T,j as V,k as X}from"./SiteChrome-Dv-Zne_3.js";import{C as G,P as K}from"./CollectionSlider-fH9JDzyf.js";import{U as M}from"./utensils-crossed-CVbhM5_Q.js";/**
  * @license lucide-react v0.487.0 - ISC
  *
  * This source code is licensed under the ISC license.
